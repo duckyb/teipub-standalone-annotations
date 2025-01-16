@@ -94,7 +94,7 @@ declare function anno:order($type as xs:string) {
         default return 1
 };
 
-declare %private function anno:strip-exist-id($nodes as node()*) {
+declare function anno:strip-exist-id($nodes as node()*) {
     for $node in $nodes
     return
         typeswitch($node)
@@ -120,7 +120,7 @@ declare function anno:revision($nodes as node()*, $log as map(*)?) {
         $nodes
 };
 
-declare %private function anno:add-revision($nodes as node()*, $log as map(*)?) {
+declare function anno:add-revision($nodes as node()*, $log as map(*)?) {
     for $node in $nodes
     return
         typeswitch($node)
@@ -182,7 +182,7 @@ declare %private function anno:add-revision($nodes as node()*, $log as map(*)?) 
                 $node
 };
 
-declare %private function anno:merge($nodes as node()*, $elements as map(*)) {
+declare function anno:merge($nodes as node()*, $elements as map(*)) {
     for $node in $nodes
     return
         typeswitch($node)
@@ -208,7 +208,7 @@ declare %private function anno:merge($nodes as node()*, $elements as map(*)) {
                 $node
 };
 
-declare %private function anno:apply($node, $annotations) {
+declare function anno:apply($node, $annotations) {
     if (empty($annotations)) then
         $node
     else
@@ -232,7 +232,7 @@ declare %private function anno:apply($node, $annotations) {
                     anno:apply($output, tail($annotations))
 };
 
-declare %private function anno:delete($nodes as node()*, $target as node()) {
+declare function anno:delete($nodes as node()*, $target as node()) {
     for $node in $nodes
     return
         typeswitch($node)
@@ -294,7 +294,7 @@ declare %private function anno:delete($nodes as node()*, $target as node()) {
                 $node
 };
 
-declare %private function anno:modify($nodes as node()*, $target as node(), $annotation as map(*)) {
+declare function anno:modify($nodes as node()*, $target as node(), $annotation as map(*)) {
     for $node in $nodes
     return
         typeswitch($node)
@@ -358,7 +358,7 @@ declare %private function anno:modify($nodes as node()*, $target as node(), $ann
                 $node
 };
 
-declare %private function anno:apply($node as node(), $startOffset as xs:int, $endOffset as xs:int, $annotation as map(*)) {
+declare function anno:apply($node as node(), $startOffset as xs:int, $endOffset as xs:int, $annotation as map(*)) {
     let $start := anno:find-offset($node, $startOffset, "start", $node instance of element(tei:note))
     let $end := anno:find-offset($node, $endOffset, "end", $node instance of element(tei:note))
     let $startAdjusted :=
@@ -378,7 +378,7 @@ declare %private function anno:apply($node as node(), $startOffset as xs:int, $e
         anno:transform($node, $startAdjusted, $endAdjusted, false(), $annotation)
 };
 
-declare %private function anno:find-outermost($context as node(), $node as node(), $pos as xs:string) {
+declare function anno:find-outermost($context as node(), $node as node(), $pos as xs:string) {
     let $parent := $node/..
     return
         if ($parent is $context) then
@@ -392,7 +392,7 @@ declare %private function anno:find-outermost($context as node(), $node as node(
             $parent
 };
 
-declare %private function anno:find-offset($nodes as node()*, $offset as xs:int, $pos as xs:string, $isNote as xs:boolean?) {
+declare function anno:find-offset($nodes as node()*, $offset as xs:int, $pos as xs:string, $isNote as xs:boolean?) {
     if (empty($nodes)) then
         ()
     else
@@ -440,7 +440,7 @@ declare %private function anno:find-offset($nodes as node()*, $offset as xs:int,
                     ()
 };
 
-declare %private function anno:string-length($nodes as node()*) {
+declare function anno:string-length($nodes as node()*) {
     anno:string-length($nodes, 0)
 };
 
@@ -448,7 +448,7 @@ declare %private function anno:string-length($nodes as node()*) {
  : Compute the string-length of the given node set, taking into account footnotes, choices and app,
  : which should be counted in part only or not at all.
  :)
-declare %private function anno:string-length($nodes as node()*, $length as xs:int) {
+declare function anno:string-length($nodes as node()*, $length as xs:int) {
     if ($nodes) then
         let $node := head($nodes)
         let $newLength :=
@@ -469,7 +469,7 @@ declare %private function anno:string-length($nodes as node()*, $length as xs:in
         $length
 };
 
-declare %private function anno:transform($nodes as node()*, $start, $end, $inAnno, $annotation as map(*)) {
+declare function anno:transform($nodes as node()*, $start, $end, $inAnno, $annotation as map(*)) {
     for $node in $nodes
     return
         typeswitch ($node)

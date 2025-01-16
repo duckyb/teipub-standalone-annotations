@@ -36,6 +36,10 @@
         {
             "name": "iiif",
             "description": "Endpoints providing IIIF presentation manifests"
+        },
+        {
+            "name": "standalone-annotations",
+            "description": "Endpoints for handling annotations on external XML documents (via URL or file upload)"
         }
     ],
     "paths": {
@@ -202,6 +206,68 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/api/standalone-annotations": {
+            "post": {
+                "summary": "Save annotations for a standalone document",
+                "description": "Apply annotations to an XML document provided either via URL or as base64 encoded content",
+                "operationId": "standalone-anno:save",
+                "tags": ["standalone-annotations"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Base64 encoded XML content"
+                                    },
+                                    "url": {
+                                        "type": "string",
+                                        "description": "URL of the remote XML document (optional if file is provided)"
+                                    },
+                                    "annotations": {
+                                        "type": "string",
+                                        "description": "JSON string representation of the annotations to apply"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Annotations applied successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string",
+                                            "description": "The annotated XML content"
+                                        },
+                                        "changes": {
+                                            "type": "array",
+                                            "description": "List of changes applied"
+                                        },
+                                        "remote": {
+                                            "type": "boolean",
+                                            "description": "Indicates this is a remote document"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - Invalid XML or missing both URL and file"
                     }
                 }
             }
