@@ -125,7 +125,7 @@ declare function anno:occurrences($type as xs:string, $key as xs:string) {
          default return ()
 };
 
-declare %private function anno:fix-namespaces($nodes as item()*) {
+declare function anno:fix-namespaces($nodes as item()*) {
     for $node in $nodes
     return
         typeswitch ($node)

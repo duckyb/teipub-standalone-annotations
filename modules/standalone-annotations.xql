@@ -15,19 +15,25 @@ import module namespace anno="http://teipublisher.com/api/annotations" at "lib/a
  :)
 declare function standalone-anno:get-document($request as map(*)) {
     let $file := request:get-uploaded-file-data("file")
-    let $url := $request?parameters?url
+    let $url := request:get-parameter("url", ())
     return
         if (exists($file)) then
             let $decodedXml := util:base64-decode($file)
-            return
+            let $stored := xmldb:store('annotate/temp.xml', 'temp.xml', $decodedXml)
+            let $storedDoc := doc($stored)
+            return $storedDoc
+            (:~ return
                 try {
-                    parse-xml($decodedXml)
+                    let $cleaned := replace($storedDoc, '<\?[^?]*\?>', '')
+                    let $parsed := parse-xml($cleaned) => annocfg:fix-namespaces()
+                    let $parsed := document { parse-xml($cleaned) => annocfg:fix-namespaces() } 
+                    return $parsed
                 } catch * {
                     error($errors:BAD_REQUEST, "Failed to parse XML from file: " || $err:description)
-                }
+                } ~:)
         else if (exists($url)) then
             try {
-                doc($url)
+                doc($url) => annocfg:fix-namespaces()
             } catch * {
                 error($errors:NOT_FOUND, "Could not retrieve document from URL: " || $url)
             }
@@ -48,7 +54,6 @@ declare function standalone-anno:save($request as map(*)) {
         else
             let $doc := util:expand($srcDoc/*, 'add-exist-id=all')
             let $map := map:merge(
-                (:~ decode the annotation JSON ~:)
                 let $parsedAnnotations := parse-json($annotations)
                 for $annoGroup in $parsedAnnotations?*
                 group by $id := $annoGroup?context
@@ -68,6 +73,8 @@ declare function standalone-anno:save($request as map(*)) {
             }
             return
                 map {
+                    "srcDoc": $srcDoc,
+                    "doc": $doc,
                     "content": serialize($output, map { "indent": false() }),
                     "changes": array { $map?* ! anno:strip-exist-id(.) },
                     "remote": true()
