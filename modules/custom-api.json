@@ -40,6 +40,14 @@
         {
             "name": "standalone-annotations",
             "description": "Endpoints for handling annotations on external XML documents (via URL or file upload)"
+        },
+        {
+            "name": "debugging",
+            "description": "Endpoints for debugging purposes"
+        },
+        {
+            "name": "testing",
+            "description": "Endpoints for testing purposes"
         }
     ],
     "paths": {
@@ -268,6 +276,128 @@
                     },
                     "400": {
                         "description": "Bad request - Invalid XML or missing both URL and file"
+                    }
+                }
+            }
+        },
+        "/api/test": {
+            "post": {
+                "summary": "Test endpoint",
+                "description": "A generic test endpoint.",
+                "operationId": "test:execute",
+                "tags": ["testing"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Base64 encoded XML content"
+                                    },
+                                    "url": {
+                                        "type": "string",
+                                        "description": "URL of the remote XML document (optional if file is provided)"
+                                    },
+                                    "annotations": {
+                                        "type": "string",
+                                        "description": "JSON string representation of the annotations to apply"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Test executed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/debug/save-document": {
+            "post": {
+                "summary": "Save uploaded document to exist-db",
+                "description": "Debugging endpoint to save a document to exist-db.",
+                "operationId": "debug:saveDocument",
+                "tags": ["debugging"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "document": {
+                                        "type": "string",
+                                        "description": "Base64 encoded document content"
+                                    }
+                                },
+                                "required": ["document"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Document saved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

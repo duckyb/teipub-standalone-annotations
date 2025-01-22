@@ -1,6 +1,6 @@
 xquery version "3.1";
 
-module namespace standalone-anno="http://teipublisher.com/api/standalone-annotations";
+module namespace test = "http://teipublisher.com/api/test";
 
 import module namespace util = "http://exist-db.org/xquery/util";
 import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
@@ -8,7 +8,7 @@ import module namespace config="http://www.tei-c.org/tei-simple/config" at "../.
 import module namespace anno = "http://teipublisher.com/api/annotations" at "lib/api/annotations.xql";
 (:~ let $collections := xmldb:match-collection("\*") ~:)
 
-declare function standalone-anno:save($request as map(*)) {
+declare function test:execute($request as map(*)) {
     (:~ read query parameters ~:)
     let $body := $request?body
     let $annotations := $body?annotations
